@@ -150,11 +150,18 @@ def _project(val):
 # Cap materialized rows; the seed is tiny, this only guards a runaway result.
 _MAX_ROWS = 2000
 
-def _run_result(code):
-    """Execute code against the live seed frames and return a JSON string with a
-    display projection and a grading canonical, or {'error': ...} on failure."""
+def _run_result(code, fresh=False):
+    """Execute code and return a JSON string with a display projection and a
+    grading canonical, or {'error': ...} on failure. When fresh is True, run
+    against a freshly built seed namespace (build_frames()) instead of the
+    shared, learner-mutable globals — mirroring grade.py's per-eval namespace so
+    an in-place learner mutation cannot drift a graded run or its expected result."""
+    if fresh:
+        c, d, r = build_frames()
+    else:
+        c, d, r = customers, deals, reps
     ns = {"pd": pd, "np": np,
-          "customers": customers, "deals": deals, "reps": reps}
+          "customers": c, "deals": d, "reps": r}
     try:
         val = _eval_last(code, ns)
     except _NoResult:
@@ -196,9 +203,9 @@ export async function resetData() {
 
 // Run learner/solution code and return { columns, rows, kind, numRows,
 // truncated, ms, canon }. Throws on Python error (message is display-ready).
-export async function runCode(src) {
+export async function runCode(src, { fresh = false } = {}) {
   const t0 = performance.now();
-  const raw = runResultFn(src);
+  const raw = runResultFn(src, fresh);
   const ms = performance.now() - t0;
   const out = JSON.parse(raw);
   if (out.error) {

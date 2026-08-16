@@ -302,7 +302,7 @@ async function runLesson(src, { check } = { check: true }) {
   state.running = true;
   $('#run-btn').classList.add('busy');
   try {
-    const res = await runCode(src);
+    const res = await runCode(src, { fresh: check });
     runStatus.textContent = statusLine(res);
     results.innerHTML = renderResultTable(res);
 
@@ -320,7 +320,7 @@ async function runLesson(src, { check } = { check: true }) {
 
     let expected = null;
     try {
-      expected = await runCode(lesson.solution);
+      expected = await runCode(lesson.solution, { fresh: true });
     } catch {
       state.feedback = 'warn';
       feedback.innerHTML = `<div class="fb fb-warn">The sample frames look modified, so this exercise can’t be checked. Use <em>Reset sample data</em> in the menu, then try again.</div>`;
