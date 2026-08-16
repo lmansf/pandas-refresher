@@ -56,7 +56,9 @@ const check = (name, cond, detail = '') => {
   });
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const consoleErrors = [];
-  page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+  // Keep the resource URL alongside the (often generic) message text so the
+  // no-console-errors check can filter by URL as well as by text.
+  page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text() + ' ' + (m.location() ? m.location().url : '')); });
   page.on('pageerror', (e) => consoleErrors.push('pageerror: ' + e.message));
 
   await page.goto(BASE);
@@ -171,7 +173,10 @@ const check = (name, cond, detail = '') => {
   const mobFb = await mob.evaluate(() => window.__pandasref.feedback);
   check('mobile run + check works', mobFb === 'ok', `feedback=${mobFb}`);
 
-  const realErrors = consoleErrors.filter((t) => !/favicon/i.test(t));
+  // The Vercel Web Analytics tag (/_vercel/insights/script.js) is served only on
+  // Vercel; anywhere else (local + CI) it 404s harmlessly — an expected 404, not
+  // a real error. Filter those out; every other console error still fails the check.
+  const realErrors = consoleErrors.filter((t) => !/favicon/i.test(t) && !/_vercel\/insights/i.test(t));
   check('no console errors', realErrors.length === 0, realErrors.join(' | ').slice(0, 200));
 
   await browser.close();
