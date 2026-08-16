@@ -368,7 +368,7 @@
   },
   {
     "id": "unique",
-    "title": "Unique values &amp; value_counts",
+    "title": "Unique values & value_counts",
     "difficulty": "beginner",
     "concept_blocks": [
       {
@@ -546,7 +546,7 @@
   },
   {
     "id": "assign",
-    "title": "Adding &amp; transforming columns",
+    "title": "Adding & transforming columns",
     "difficulty": "intermediate",
     "concept_blocks": [
       {
@@ -669,7 +669,7 @@
   },
   {
     "id": "left-merge",
-    "title": "Left merge &amp; non-matches",
+    "title": "Left merge & non-matches",
     "difficulty": "advanced",
     "concept_blocks": [
       {
@@ -749,7 +749,7 @@
   },
   {
     "id": "window-rank",
-    "title": "Ranking &amp; window ops",
+    "title": "Ranking & window ops",
     "difficulty": "advanced",
     "concept_blocks": [
       {

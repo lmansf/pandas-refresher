@@ -375,7 +375,9 @@ async function runLesson(src, { check } = { check: true }) {
 
 function showHint() {
   const box = $('#hint-box');
-  box.textContent = '💡 ' + LESSONS[state.view].hint;
+  // Hints are authored with inline HTML (<code>…</code>, &mdash;, &rsquo;), so
+  // render as HTML — matching the concept/task prose — not as literal text.
+  box.innerHTML = '💡 ' + LESSONS[state.view].hint;
   box.hidden = false;
   box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
