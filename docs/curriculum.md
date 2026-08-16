@@ -5,6 +5,10 @@ browser) but teaches **pandas**, running **real pandas via Pyodide** in the visi
 Each lesson explains one idea, shows a runnable example, then hands the learner an exercise that
 is auto-graded by comparing their result's *values* against a reference solution's result.
 
+> **`curriculum.json` is the authoritative shipped catalog (20 lessons: 10 beginner / 6 intermediate
+> / 4 advanced).** This document is the authoring contract; if it ever disagrees with `curriculum.json`
+> on a lesson's id, title, difficulty, or order, `curriculum.json` wins — reconcile this doc to it.
+
 ## The data (single source of truth: `seed.py`)
 
 Three DataFrames, available in the learner's namespace as `customers`, `deals`, `reps`
@@ -74,55 +78,60 @@ The harness for running snippets against seed.py is provided; see the agent prom
 
 ---
 
-## The 18 lessons (id · title · difficulty · what it teaches · the exercise intent)
+## The 20 lessons (id · title · difficulty · what it teaches · the exercise intent)
 
-**Beginner (1–9)**
+**Beginner (1–10)**
 1. `first-look` · Your first DataFrame · beginner · what a DataFrame is; `.head()`, `.shape`, `.columns`,
    `.dtypes`; that everything runs real pandas locally. Exercise: show the whole `customers` DataFrame.
 2. `select-columns` · Selecting columns · beginner · `df["col"]` (Series) vs `df[["a","b"]]` (DataFrame);
    column order. Exercise: just `name` and `city` of every customer, in that order.
-3. `filter-rows` · Filtering with boolean masks · beginner · comparison → boolean Series → `df[mask]`;
+3. `indexing` · Label vs position: .loc and .iloc · beginner · label-based `.loc` vs position-based `.iloc`;
+   row/column selection, slices. Exercise: via `.iloc`, the first 5 rows of `customers`, all 6 columns, original order. (order_matters)
+4. `filter-rows` · Filtering with boolean masks · beginner · comparison → boolean Series → `df[mask]`;
    `==`, `!=`, `>`, `<`. Exercise: every column of deals with `amount` greater than 30000.
-4. `sort` · Sorting with sort_values · beginner · `sort_values(by, ascending=)`; ties. Exercise: all of
+5. `sort` · Sorting with sort_values · beginner · `sort_values(by, ascending=)`; ties. Exercise: all of
    `reps` sorted by `hired_date`, most recent first. (order_matters)
-5. `top-n` · Top-N with nlargest / sort+head · beginner · `nlargest`, `sort_values(...).head(n)`.
+6. `top-n` · Top-N with nlargest / sort+head · beginner · `nlargest`, `sort_values(...).head(n)`.
    Exercise: the 3 biggest deals — `deal_id` and `amount`, largest first. (order_matters)
-6. `multi-condition` · Combining conditions (& | isin between) · beginner · parenthesized `&`/`|`,
+7. `multi-condition` · Combining conditions (& | isin between) · beginner · parenthesized `&`/`|`,
    `.isin([...])`, `.between(lo,hi)`. Exercise: `name` and `country` of customers in UK or Canada, via `isin`.
-7. `strings` · String methods (.str) · beginner · `.str.contains`, `.str.startswith`, case sensitivity.
+8. `strings` · String methods (.str) · beginner · `.str.contains`, `.str.startswith`, case sensitivity.
    Exercise: `name` of customers whose name contains "Retail".
-8. `missing` · Missing data (isna / notna / NaT) · beginner · NaT ≠ 0/empty; `.isna()`, `.notna()`,
+9. `missing` · Missing data (isna / notna / NaT) · beginner · NaT ≠ 0/empty; `.isna()`, `.notna()`,
    why `== NaN` fails; brief `fillna`. Exercise: `deal_id`, `stage`, `amount` of still-open deals (closed_date is NaT).
-9. `unique` · Unique values & value_counts · beginner · `.unique()`, `.nunique()`, `.value_counts()`,
-   `drop_duplicates()`. Exercise: the list of unique `industry` values among customers.
+10. `unique` · Unique values & value_counts · beginner · `.unique()`, `.nunique()`, `.value_counts()`,
+    `drop_duplicates()`. Exercise: the list of unique `industry` values among customers.
 
-**Intermediate (10–14)**
-10. `aggregate` · Aggregating a column · intermediate · `.sum()`, `.mean()`, `.count()`, `.min()`,
+**Intermediate (11–16)**
+11. `aggregate` · Aggregating a column · intermediate · `.sum()`, `.mean()`, `.count()`, `.min()`,
     `.max()` on a Series; NaN handling. Exercise: in one expression, the number of deals and the total
     `amount` (name them `num_deals`, `total_value` — a one-row frame or a Series with those labels).
-11. `groupby` · Grouping with groupby · intermediate · split-apply-combine; `groupby(col).size()` /
+12. `groupby` · Grouping with groupby · intermediate · split-apply-combine; `groupby(col).size()` /
     `.agg`; group key as index. Exercise: count of deals in each `stage`.
-12. `groupby-filter` · Filtering groups (HAVING-style) · intermediate · aggregate then filter the groups
+13. `groupby-filter` · Filtering groups (HAVING-style) · intermediate · aggregate then filter the groups
     (`groupby.filter`, or aggregate then boolean-mask). Exercise: industries with more than 2 customers
     (industry + count).
-13. `assign` · Adding / transforming columns · intermediate · `assign`, vectorized derived columns,
-    `np.where`/boolean; `.dt` for a date-derived column. Exercise: add a computed column (e.g. a boolean
+14. `assign` · Adding / transforming columns · intermediate · `assign`, vectorized derived columns,
+    `np.where`/boolean. Exercise: add a computed column (e.g. a boolean
     `is_won` or `amount_k = amount/1000`) — author picks the cleanest, states the expected columns.
-14. `merge` · Combining DataFrames with merge · intermediate · `merge(on=...)`, inner join semantics,
+15. `datetime` · Working with dates (.dt) · intermediate · the `.dt` accessor for date-derived columns
+    (`.dt.year`/`.dt.month`/`.dt.day`), filtering on extracted parts. Exercise: `name` and `signup_date` of
+    customers who signed up in 2024, via `.dt.year`.
+16. `merge` · Combining DataFrames with merge · intermediate · `merge(on=...)`, inner join semantics,
     suffixes, selecting columns after. Exercise: each deal's `amount` next to its **rep's** `name`
     (merge deals ↔ reps).
 
-**Advanced (15–18)**
-15. `left-merge` · Left merge & finding non-matches · advanced · `how="left"`, `indicator=True`, rows
+**Advanced (17–20)**
+17. `left-merge` · Left merge & finding non-matches · advanced · `how="left"`, `indicator=True`, rows
     with no match → NaN; the anti-join pattern. Exercise: customers with **no deals at all** (their `name`).
-16. `pivot` · Reshaping with pivot_table · advanced · `pivot_table(index, columns, values, aggfunc,
+18. `pivot` · Reshaping with pivot_table · advanced · `pivot_table(index, columns, values, aggfunc,
     fill_value)`; margins. Exercise: total deal `amount` by `industry` (rows) × `stage` (columns),
     zero-filled — author states exact shape/labels.
-17. `window-rank` · Ranking & window ops · advanced · `groupby(...).rank()` / `transform` / `cumsum`;
+19. `window-rank` · Ranking & window ops · advanced · `groupby(...).rank()` / `transform` / `cumsum`;
     per-group ranking without collapsing rows. Exercise: within each `stage`, rank deals by `amount`
     (largest = rank 1) and return `deal_id`, `stage`, `amount`, `rank_in_stage` — author picks a clean,
     deterministic form (mind ties; use a method that avoids ambiguity, and reset_index if order_matters).
-18. `capstone` · Putting it all together · advanced · a single chained pipeline: merge → filter → groupby
+20. `capstone` · Putting it all together · advanced · a single chained pipeline: merge → filter → groupby
     → aggregate → sort → head. Exercise: the **sales leaderboard** — for Won deals only, each rep's `name`
     and total won `amount` as `total_won`, highest first, top 3. (order_matters)
 
