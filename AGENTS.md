@@ -80,6 +80,9 @@ curriculum is validated; flag the divergence instead.
   curriculum against a pandas-2.2.3 venv (`revalidate.py` expects a `pyodenv/` sibling). Use it to confirm
   a lesson change still grades before trusting the browser.
 - **Deploy:** static, zero-config on Vercel. `vercel.json` marks `/vendor/` immutable (1-year cache).
+  Web Analytics is wired via the same-origin `<script defer src="/_vercel/insights/script.js">` tag in
+  `index.html` (no npm package, no bundler — keeps the no-CDN/no-build design); it also **must be enabled
+  in the Vercel dashboard** (Project → Analytics) for data to flow, and 404s harmlessly off Vercel.
 
 ## Maintaining this file
 

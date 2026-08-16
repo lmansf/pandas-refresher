@@ -35,6 +35,8 @@ Zero-config static hosting: at [vercel.com/new](https://vercel.com/new), import 
 
 The first visit downloads ~30 MB (the Pyodide runtime plus the pandas/numpy wheels); `vercel.json` marks `vendor/` immutable so revisits are instant. Progress lives in `localStorage`, so it's per device. Any other static host (GitHub Pages, Netlify, …) works just as well.
 
+Web Analytics is wired via the same-origin `<script defer src="/_vercel/insights/script.js">` tag in `index.html` (no npm package, no build step). Data only flows once Web Analytics is **enabled for the project in the Vercel dashboard** (Project → Analytics); off Vercel the tag just 404s harmlessly.
+
 ## How it works
 
 - **Pyodide 0.27.7** (which ships **pandas 2.2.3** / **numpy 2.0.2**) is vendored in `vendor/` — the runtime plus the pandas dependency closure (`numpy`, `python-dateutil`, `pytz`, `six`) and a trimmed `pyodide-lock.json`. It loads with a local `indexURL`, so **no CDN is hit at runtime**. Requires a browser with WebAssembly support: Chrome 95+, Safari 15.2+, Firefox 100+.
