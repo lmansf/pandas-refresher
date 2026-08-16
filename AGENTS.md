@@ -74,6 +74,8 @@ curriculum is validated; flag the divergence instead.
 - **e2e:** `cd test && npm install && npm test` — Playwright boots the real site headless and asserts the
   engine starts, every lesson's `solution` grades PASS, and grading/errors/playground/reset/persistence/
   mobile behave. `CHROMIUM_PATH` overrides the browser binary.
+- **CI:** `.github/workflows/ci.yml` runs that same e2e suite on every PR and on pushes to `fm/**`/`main`
+  (`test/e2e.js` starts its own static server, so no separate web server is wired in CI).
 - **Conformance oracle (offline):** `docs/curriculum.md` + `grade.py` + `revalidate.py` re-validate the
   curriculum against a pandas-2.2.3 venv (`revalidate.py` expects a `pyodenv/` sibling). Use it to confirm
   a lesson change still grades before trusting the browser.
