@@ -1,0 +1,835 @@
+[
+  {
+    "id": "first-look",
+    "title": "Your first DataFrame",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Welcome aboard. Everything you run here is <strong>real pandas</strong>, executing right in your browser &mdash; no server, no setup. Three tables are already loaded and waiting for you: <code>customers</code>, <code>deals</code>, and <code>reps</code>. Each one is a <strong>DataFrame</strong>: a rectangular grid of data with named <em>columns</em> and numbered <em>rows</em>, a lot like a spreadsheet you can talk to in code.</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The friendliest way to meet a DataFrame is <code>.head()</code>, which shows the first few rows so you can eyeball the shape of things without printing hundreds of lines. Try it on <code>customers</code>:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers.head()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Three attributes tell you the lay of the land. <code>.shape</code> gives a <code>(rows, columns)</code> tuple, <code>.columns</code> lists the column names, and <code>.dtypes</code> reports each column&rsquo;s type &mdash; notice that <code>signup_date</code> is a real <code>datetime64</code>, not just text. Getting fluent with these three is how you orient yourself in any unfamiliar table.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers.shape\ncustomers.columns\ncustomers.dtypes"
+      }
+    ],
+    "task_html": "<p>Meet the whole table. In one expression, <strong>show the entire <code>customers</code> DataFrame</strong> &mdash; all 15 rows and all 6 columns.</p>",
+    "hint": "A DataFrame&rsquo;s own name, evaluated on its own, displays the whole thing &mdash; no method call needed.",
+    "solution": "customers",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "15 rows x 6 cols",
+    "result_preview": "    customer_id                  name  ...         country signup_date\n0             1       Acme Industries  ...   United States  2024-01-15\n1             2     Brightside Health  ...   United States  2023-06-03\n2             3  Cascade Retail Group  ...   United States  2025-03-22\n3             4        DataForge Labs  ...   United States  2024-09-10\n4             5      Eiffel Logistics  ...          France  2023-11-30\n...\n14           15        Orbit Software  ...   United States  2025-09-28\n\n[15 rows x 6 columns]",
+    "alt_solutions": [
+      "customers.head(15)",
+      "customers.loc[:, :]",
+      "customers.copy()"
+    ],
+    "validation_notes": "Ran against seed.py with the Pyodide-matched interpreter (pandas 2.2.3) via grade.py. Reference `customers` runs clean: kind=dataframe, shape=15 rows x 6 cols. All three alt_solutions (customers.head(15), customers.loc[:, :], customers.copy()) graded PASS: match with order_matters=false. Every concept_blocks code example executed without error: customers.head() -> 5-row dataframe; customers.shape -> (15, 6); customers.columns -> Index of 6 names; customers.dtypes -> series showing signup_date as datetime64[ns]. Deterministic and unambiguous; no ties or float formatting concerns.",
+    "validated": true
+  },
+  {
+    "id": "select-columns",
+    "title": "Selecting columns",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>A whole DataFrame is a fine thing to look at, but usually you only care about a column or two. Reach for a single column by name with square brackets &mdash; <code>customers[\"city\"]</code> &mdash; and pandas hands you back a <strong>Series</strong>: a one-dimensional labeled column, index on the left and values on the right.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers[\"city\"]"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Now watch what happens when you pass a <em>list</em> of names inside the brackets. <code>customers[[\"city\"]]</code> &mdash; note the double brackets &mdash; gives you a <strong>DataFrame</strong> instead, a table that just happens to have one column. That is the key distinction: <code>df[\"col\"]</code> (a string) returns a Series, while <code>df[[\"col\"]]</code> (a list) returns a DataFrame. The list form scales to as many columns as you name.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers[[\"city\", \"name\"]].head()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>One more thing worth internalizing: <em>the order you list the columns is the order you get them back</em>. Asking for <code>[\"city\", \"name\"]</code> puts city first, even though <code>name</code> comes earlier in the original frame. You choose the shape of the output &mdash; which columns, and in what order.</p>"
+      }
+    ],
+    "task_html": "<p>Return a table with just the <strong><code>name</code> and <code>city</code></strong> columns of every customer &mdash; list <code>name</code> first.</p>",
+    "hint": "Pass a list of the two column names, in the order you want them, inside df[[...]].",
+    "solution": "customers[[\"name\", \"city\"]]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "15 rows x 2 cols",
+    "result_preview": "                    name           city\n0        Acme Industries        Chicago\n1      Brightside Health         Boston\n2   Cascade Retail Group        Seattle\n3         DataForge Labs         Austin\n4       Eiffel Logistics          Paris\n5        Fjord Analytics           Oslo\n6          Garcia & Sons         Madrid\n7          Helios Energy        Houston\n8        Ivywood Academy         London\n9       Juniper Software         Berlin\n10    Kensington Finance         London",
+    "alt_solutions": [
+      "customers.loc[:, [\"name\", \"city\"]]",
+      "cols = [\"name\", \"city\"]\ncustomers[cols]"
+    ],
+    "validation_notes": "Ran in the pinned pyodenv (pandas 2.2.3) via spec/grade.py against seed.py. `grade.py --run` on the reference `customers[[\\\"name\\\", \\\"city\\\"]]` yields a 15x2 DataFrame (kind: dataframe) with columns name, city in that order. Both alt_solutions graded PASS: `customers.loc[:, [\\\"name\\\", \\\"city\\\"]]` and the two-line `cols = [\\\"name\\\",\\\"city\\\"]; customers[cols]`. All three concept code examples (`customers[\\\"city\\\"]`, `customers[[\\\"city\\\"]]`, `customers[[\\\"city\\\", \\\"name\\\"]].head()`) executed cleanly via --run. order_matters is false: only two distinct columns and rows are compared as a multiset, so column-label match plus value multiset is unambiguous and deterministic. Column-order requirement in the prompt is a teaching point; grading compares column labels as a set, so a learner who writes [\\\"city\\\",\\\"name\\\"] would still pass by values, which is acceptable and fair for a beginner selection lesson.",
+    "validated": true
+  },
+  {
+    "id": "indexing",
+    "title": "Label vs position: .loc and .iloc",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Square brackets on a frame pick <em>columns</em>. To reach for <em>rows</em> &mdash; or rows and columns together &mdash; pandas gives you two accessors, and the difference between them is worth burning into memory. <code>.iloc</code> works by <strong>integer position</strong>, exactly like slicing a Python list: <code>customers.iloc[:5]</code> means &ldquo;the first five rows,&rdquo; whatever their labels happen to be. <code>.loc</code> works by <strong>label</strong> &mdash; the actual index values and column names &mdash; and it also understands boolean masks.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "# .iloc is positional: the first 5 rows, all columns\ncustomers.iloc[:5]"
+      },
+      {
+        "kind": "html",
+        "html": "<p><code>.loc</code> is the label-aware sibling. Its real power shows up with two arguments &mdash; <code>df.loc[rows, cols]</code> &mdash; letting you carve out specific rows <em>and</em> specific columns in one move. The row selector can be a boolean mask (a condition), and the column selector a list of names. Here we take Won deals over &#36;30k and keep just three columns:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "won = deals[deals[\"stage\"] == \"Won\"]\nwon.loc[won[\"amount\"] > 30000, [\"deal_id\", \"amount\", \"stage\"]]"
+      },
+      {
+        "kind": "html",
+        "html": "<p>For a single cell, either accessor takes a row-then-column pair: <code>customers.iloc[0, 1]</code> pulls the value at the first row, second column by position, while <code>customers.loc[0, &quot;name&quot;]</code> asks for it by label. The rule of thumb: reach for <code>.iloc</code> when you&rsquo;re thinking in positions and offsets, and <code>.loc</code> when you&rsquo;re thinking in names and conditions.</p>"
+      }
+    ],
+    "task_html": "<p>Using <code>.iloc</code>, return the <strong>first 5 rows</strong> of the <code>customers</code> table, keeping <strong>all 6 columns</strong>, in their original order.</p>",
+    "hint": "Slice by position with df.iloc[:5] — a positional row slice keeps every column and the original row order.",
+    "solution": "customers.iloc[:5]",
+    "order_matters": true,
+    "result_kind": "dataframe",
+    "result_shape": "5 rows x 6 cols",
+    "result_preview": "   customer_id                  name  ...        country signup_date\n0            1       Acme Industries  ...  United States  2024-01-15\n1            2     Brightside Health  ...  United States  2023-06-03\n2            3  Cascade Retail Group  ...  United States  2025-03-22\n3            4        DataForge Labs  ...  United States  2024-09-10\n4            5      Eiffel Logistics  ...         France  2023-11-30\n\n[5 rows x 6 columns]",
+    "alt_solutions": [
+      "customers.iloc[0:5]",
+      "customers.iloc[:5, :]",
+      "customers.head(5)"
+    ],
+    "validation_notes": "Validated in the pinned pyodenv (pandas 2.2.3) against spec/seed.py via spec/grade.py. `grade.py --run` on the reference `customers.iloc[:5]` yields a dataframe, 5 rows x 6 cols (repr in result_preview, columns collapsed by pandas display width — the actual repr). order_matters=true because the ask is a positional slice; graded three alt solutions with `--order` and all returned PASS: match — `customers.iloc[0:5]`, `customers.iloc[:5, :]`, and `customers.head(5)`. The index is left intact (no reset_index): grading ignores the index and compares rows positionally, so leaving the default 0..4 index is fine and matches. Confirmed order_matters is meaningful: a reversed slice `customers.iloc[4::-1]` graded FAIL ('right values, wrong order') under --order. All three concept code examples ran clean via `--run`: the reference iloc slice; the two-argument `.loc[mask, cols]` over Won deals >30000 (6 rows x 3 cols); and the scalar `customers.iloc[0, 1]` -> 'Acme Industries'. Task is deterministic — a fixed positional slice with a unique customer_id per row.",
+    "validated": true
+  },
+  {
+    "id": "filter-rows",
+    "title": "Filtering with boolean masks",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Selecting <em>columns</em> narrows a table sideways. Filtering <em>rows</em> narrows it downward &mdash; keep only the records that pass some test. In pandas you do this in two steps that are worth seeing separately. First, a comparison on a column produces a <strong>boolean mask</strong>: a Series of <code>True</code>/<code>False</code>, one value per row.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[\"amount\"] > 20000"
+      },
+      {
+        "kind": "html",
+        "html": "<p>That mask lines up with the frame row-for-row. Hand it back to the frame with <code>df[mask]</code> and pandas keeps only the rows where the mask is <code>True</code> &mdash; every column comes along for the ride:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[deals[\"stage\"] == \"Won\"]"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Any comparison operator builds a mask: <code>==</code> (equal), <code>!=</code> (not equal), <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>. Note the doubled <code>==</code> for equality &mdash; a single <code>=</code> is assignment. You will often write the comparison straight inside the brackets, as in <code>deals[deals[\"amount\"] &gt; 20000]</code>, once the two-step idea is familiar.</p>"
+      }
+    ],
+    "task_html": "<p>Return <strong>every column of <code>deals</code> where <code>amount</code> is greater than 30000</strong> &mdash; the biggest opportunities on the board.</p>",
+    "hint": "Build a boolean mask with deals[\"amount\"] > 30000, then index the frame with it: deals[mask].",
+    "solution": "deals[deals[\"amount\"] > 30000]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "8 rows x 7 cols",
+    "result_preview": "    deal_id  customer_id  rep_id  amount     stage opened_date closed_date\n2         3            2       4   32000       Won  2025-02-14  2025-04-02\n4         5            4       3   45000       Won  2025-03-20  2025-05-30\n11       12            8       4   61000  Proposal  2026-01-15         NaT\n15       16           11       2   54000       Won  2025-09-18  2025-11-30\n18       19           14       5   36000       Won  2025-07-07  2025-08-25\n20       21           15       1   48000       Won  2025-11-11  2026-01-09\n26       27           10       2   41000  Proposal  2026-03-18         NaT\n29       30           15       3   33500       Won  2026-01-30  2026-03-12",
+    "alt_solutions": [
+      "mask = deals[\"amount\"] > 30000\ndeals[mask]",
+      "deals.loc[deals[\"amount\"] > 30000]",
+      "deals.query(\"amount > 30000\")"
+    ],
+    "validation_notes": "Ran in the pinned Pyodide-matched venv (pandas 2.2.3) against spec/seed.py via grade.py. Reference `deals[deals[\\\"amount\\\"] > 30000]` runs clean: dataframe, 8 rows x 7 cols (repr captured into result_preview). All three alt_solutions graded PASS/match against the reference: the two-step mask variable form, the `.loc[...]` form, and `deals.query(\\\"amount > 30000\\\")`. All three concept_blocks code examples executed without error (`deals[\\\"amount\\\"] > 20000` -> boolean series len 30; `deals[deals[\\\"stage\\\"] == \\\"Won\\\"]` -> 13x7; the inline `> 20000` variant is illustrative prose only). order_matters=false; grading compares rows as a multiset, and the >30000 boundary has no amount ties so the row set is deterministic.",
+    "validated": true
+  },
+  {
+    "id": "sort",
+    "title": "Sorting with sort_values",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Rows come out of a DataFrame in whatever order they were stored. When you want them ranked &mdash; newest first, biggest at the top, alphabetical &mdash; reach for <code>sort_values</code>. You hand it the column to sort <em>by</em>, and it returns a <strong>new</strong> DataFrame with the rows rearranged; the original is left untouched.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "reps.sort_values(by=\"hired_date\")"
+      },
+      {
+        "kind": "html",
+        "html": "<p>That sorts <strong>ascending</strong> by default &mdash; smallest to largest, and for dates that means oldest first. Flip it with <code>ascending=False</code> to put the largest (or most recent) value at the top:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "reps.sort_values(by=\"region\", ascending=False)"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Sort by several columns at once by passing a list. Pandas breaks ties left to right &mdash; it orders by the first column, and only when two rows tie does the second column decide. You can even give each its own direction with a matching list of booleans:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals.sort_values(by=[\"stage\", \"amount\"], ascending=[True, False]).head()"
+      }
+    ],
+    "task_html": "<p>Return <strong>all of <code>reps</code></strong> sorted by <code>hired_date</code>, <strong>most recent first</strong> &mdash; so the newest hire is at the top.</p>",
+    "hint": "Use sort_values on hired_date with ascending=False to put the most recent date first.",
+    "solution": "reps.sort_values(by=\"hired_date\", ascending=False).reset_index(drop=True)",
+    "order_matters": true,
+    "result_kind": "dataframe",
+    "result_shape": "5 rows x 4 cols",
+    "result_preview": "   rep_id            name   region hired_date\n0       5     Sofia Reyes     East 2025-02-27\n1       3      Priya Nair     West 2024-06-20\n2       1  Dana Whitfield     West 2023-03-15\n3       4      Tom Okafor  Central 2022-01-08\n4       2      Marcus Lee     East 2021-11-02",
+    "alt_solutions": [
+      "reps.sort_values(\"hired_date\", ascending=False).reset_index(drop=True)",
+      "reps.sort_values(by=[\"hired_date\"], ascending=[False]).reset_index(drop=True)"
+    ],
+    "validation_notes": "Ran against seed.py with the Pyodide-matched interpreter (pandas 2.2.3) via grade.py. `grade.py --run sol.py` printed kind=dataframe, shape 5 rows x 4 cols, with Sofia Reyes (2025-02-27) at the top and Marcus Lee (2021-11-02) at the bottom — descending by hired_date as intended. Both alt_solutions graded PASS with --order (positional-only keyword form, and list-form by/ascending). All three concept_blocks code examples ran clean via grade.py --run. hired_date values are all distinct, so the ordering is fully deterministic with no ties at the boundary. order_matters=true with reset_index(drop=True) so row order is enforced without the index fighting the grader.",
+    "validated": true
+  },
+  {
+    "id": "top-n",
+    "title": "Top-N with nlargest",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Often you don&rsquo;t want the whole table sorted &mdash; you just want the <em>few biggest</em> (or smallest) rows. <code>nlargest</code> does exactly that in one step: it finds the top <code>n</code> rows by a column and hands them back already ordered largest-first.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals.nlargest(3, \"amount\")"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The classic long-hand is to sort the whole frame and then take the head: <code>sort_values(\"amount\", ascending=False)</code> puts the biggest on top, and <code>.head(3)</code> keeps the first three. Same rows, same order &mdash; <code>nlargest</code> is just the tidy shortcut.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals.sort_values(\"amount\", ascending=False).head(3)"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Both give you the full rows. To keep only the columns you care about, tack on a column selection: <code>deals.nlargest(3, \"amount\")[[\"deal_id\", \"amount\"]]</code>. When order is the whole point, finish with <code>.reset_index(drop=True)</code> so the row numbers read <code>0, 1, 2</code> instead of the original scattered index.</p>"
+      }
+    ],
+    "task_html": "<p>Find the <strong>3 biggest deals</strong>. Return just <code>deal_id</code> and <code>amount</code>, with the <strong>largest first</strong>.</p>",
+    "hint": "Use <code>deals.nlargest(3, \"amount\")</code> (or sort descending and take <code>.head(3)</code>), then pick the two columns.",
+    "solution": "deals.nlargest(3, \"amount\")[[\"deal_id\", \"amount\"]].reset_index(drop=True)",
+    "order_matters": true,
+    "result_kind": "dataframe",
+    "result_shape": "3 rows x 2 cols",
+    "result_preview": "   deal_id  amount\n0       12   61000\n1       16   54000\n2       21   48000",
+    "alt_solutions": [
+      "deals.sort_values(\"amount\", ascending=False).head(3)[[\"deal_id\", \"amount\"]].reset_index(drop=True)",
+      "deals[[\"deal_id\", \"amount\"]].sort_values(\"amount\", ascending=False).head(3).reset_index(drop=True)"
+    ],
+    "validation_notes": "Validated with the Pyodide-matched interpreter (pandas 2.2.3) against seed.py via grade.py. `--run` on the reference solution produced kind=dataframe, shape 3 rows x 2 cols, repr matching result_preview. Both alt_solutions graded PASS with --order (order_matters=true). Both concept code examples (deals.nlargest(3,\"amount\") and the sort_values(...).head(3) form) ran clean and returned the identical top-3 rows. The top-3 amounts (61000, 54000, 48000) are well separated with no ties at the boundary, so the ordering is fully deterministic.",
+    "validated": true
+  },
+  {
+    "id": "multi-condition",
+    "title": "Combining conditions",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>One boolean mask filters on a single test. Real questions usually stack several: &ldquo;Won <em>and</em> big&rdquo;, &ldquo;this country <em>or</em> that one&rdquo;. You combine masks with <code>&amp;</code> (and) and <code>|</code> (or) &mdash; but pandas has one firm rule here: <strong>wrap each condition in its own parentheses</strong>. Without them, Python&rsquo;s operator precedence runs <code>&amp;</code> before the comparisons and you get a confusing error instead of a filter.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[(deals[\"stage\"] == \"Won\") & (deals[\"amount\"] > 30000)]"
+      },
+      {
+        "kind": "html",
+        "html": "<p>When you&rsquo;re testing one column against a <em>list</em> of allowed values, chaining <code>|</code> gets clumsy fast. <code>.isin([...])</code> is the clean way to say &ldquo;is this value one of these?&rdquo; &mdash; it returns a boolean mask just like a comparison does. And for a numeric range, <code>.between(lo, hi)</code> reads better than two comparisons joined with <code>&amp;</code> (both ends are inclusive).</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[deals[\"stage\"].isin([\"Won\", \"Lost\"])]"
+      },
+      {
+        "kind": "code",
+        "code": "deals[deals[\"amount\"].between(10000, 20000)]"
+      }
+    ],
+    "task_html": "<p>Using <code>.isin([...])</code>, find the customers based in the <strong>United Kingdom or Canada</strong>. Return just their <strong>name</strong> and <strong>country</strong>.</p>",
+    "hint": "Build a mask with customers[\"country\"].isin([\"United Kingdom\", \"Canada\"]), filter with it, then select the two columns.",
+    "solution": "customers[customers[\"country\"].isin([\"United Kingdom\", \"Canada\"])][[\"name\", \"country\"]]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "4 rows x 2 cols",
+    "result_preview": "                  name         country\n8      Ivywood Academy  United Kingdom\n10  Kensington Finance  United Kingdom\n11    Lakeshore Clinic          Canada\n12     Maple Retail Co          Canada",
+    "alt_solutions": [
+      "mask = customers[\"country\"].isin([\"United Kingdom\", \"Canada\"])\ncustomers.loc[mask, [\"name\", \"country\"]]",
+      "customers[(customers[\"country\"] == \"United Kingdom\") | (customers[\"country\"] == \"Canada\")][[\"name\", \"country\"]]"
+    ],
+    "validation_notes": "Validated with the Pyodide-matched interpreter (pandas 2.2.3) via grade.py against seed.py. `--run` on the reference solution yields a 4-row x 2-col DataFrame (Ivywood Academy/UK, Kensington Finance/UK, Lakeshore Clinic/Canada, Maple Retail Co/Canada). Both alt_solutions (a .loc-based isin mask, and an explicit `|` on two equality tests) graded PASS: match against the reference. All three concept_blocks code examples ran clean (`--run`): the parenthesized `&` filter (6 rows), the isin two-value filter (18 rows), and the between range filter (7 rows). Task is deterministic: exactly 4 customers are in the UK or Canada, no ties or ambiguity. order_matters=false since this is a set-membership filter, not a sort.",
+    "validated": true
+  },
+  {
+    "id": "strings",
+    "title": "String methods (.str)",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>A column of text is a <code>Series</code> of strings, and pandas gives every such Series a <code>.str</code> accessor &mdash; a doorway to string operations that run on every row at once. Reach for it whenever you want to ask a text question of a whole column: <code>.str.contains(\"Retail\")</code> asks &ldquo;does this value contain <em>Retail</em>?&rdquo;, and <code>.str.startswith(\"D\")</code> asks &ldquo;does it begin with <em>D</em>?&rdquo;. Each one returns a boolean Series, one <code>True</code>/<code>False</code> per row, which is exactly the shape a filter mask needs.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "reps[reps[\"name\"].str.startswith(\"D\")]"
+      },
+      {
+        "kind": "html",
+        "html": "<p>These checks are <strong>case-sensitive by default</strong>, so <code>.str.contains(\"retail\")</code> would miss <code>\"Cascade Retail Group\"</code>. When you want to ignore capitalization, pass <code>case=False</code>. The example below finds every city containing the letters <code>on</code> in any case &mdash; note how it catches both <code>&ldquo;London&rdquo;</code> and <code>&ldquo;Boston&rdquo;</code>.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers[customers[\"city\"].str.contains(\"on\", case=False)][\"city\"]"
+      }
+    ],
+    "task_html": "<p>Using a string method, return the <strong><code>name</code></strong> of every customer <strong>whose name contains &ldquo;Retail&rdquo;</strong>. Keep the default case sensitivity.</p>",
+    "hint": "Build a boolean mask with customers[\"name\"].str.contains(\"Retail\"), use it to filter, then pull the \"name\" column.",
+    "solution": "customers[customers[\"name\"].str.contains(\"Retail\")][\"name\"]",
+    "order_matters": false,
+    "result_kind": "series",
+    "result_shape": "series len 2",
+    "result_preview": "2     Cascade Retail Group\n12         Maple Retail Co\nName: name, dtype: object",
+    "alt_solutions": [
+      "customers.loc[customers[\"name\"].str.contains(\"Retail\", case=True), \"name\"]",
+      "mask = customers[\"name\"].str.contains(\"Retail\")\ncustomers[mask][\"name\"]"
+    ],
+    "validation_notes": "Ran in the Pyodide-matched venv (pandas 2.2.3) via grade.py against seed.py. Reference `--run` yields a Series of length 2 (labels 2, 12): \"Cascade Retail Group\" and \"Maple Retail Co\" — the only two customer names containing \"Retail\". Both alt_solutions graded PASS: match against the reference (the .loc form with explicit case=True, and the two-step mask form). All three concept_blocks code examples (reps startswith \"D\"; city contains \"on\" boolean Series; city contains \"on\" case=False) ran clean. Task is deterministic and unambiguous; order_matters=false since it's a set membership answer.",
+    "validated": true
+  },
+  {
+    "id": "missing",
+    "title": "Missing data (NaT)",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>When a deal is still open, it has no close date yet &mdash; and pandas records that hole with a special marker, <code>NaT</code> (&ldquo;Not a Time&rdquo;, the datetime cousin of <code>NaN</code>). It is emphatically <em>not</em> zero, not an empty string, and not the year 1970. It means <strong>&ldquo;there is no value here.&rdquo;</strong> Every open deal in <code>deals</code> carries a <code>NaT</code> in <code>closed_date</code>.</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The trap: you cannot find missing values by comparing to them. Any comparison against a missing value returns <code>False</code>, because &ldquo;unknown == unknown&rdquo; is itself unknown. So <code>closed_date == pd.NaT</code> never matches a single row &mdash; watch it count to zero:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "(deals[\"closed_date\"] == pd.NaT).sum()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The right tool is <code>.isna()</code>, which returns a boolean Series that is <code>True</code> exactly where the value is missing. Its mirror image is <code>.notna()</code>, <code>True</code> where a value <em>is</em> present. Use them as masks to keep or drop rows:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[\"closed_date\"].isna().sum()   # how many deals are still open"
+      },
+      {
+        "kind": "html",
+        "html": "<p>And when you want to <em>replace</em> the holes rather than filter them, <code>.fillna(value)</code> swaps every missing entry for a value of your choosing &mdash; handy for display, though here we just want to find the open deals.</p>"
+      }
+    ],
+    "task_html": "<p>The still-open deals are the ones that haven&rsquo;t closed yet &mdash; their <code>closed_date</code> is <code>NaT</code>. Return the <strong><code>deal_id</code>, <code>stage</code>, and <code>amount</code></strong> (in that order) of <strong>every deal whose <code>closed_date</code> is missing</strong>.</p>",
+    "hint": "Build a mask with deals[\"closed_date\"].isna(), then select the three columns.",
+    "solution": "deals.loc[deals[\"closed_date\"].isna(), [\"deal_id\", \"stage\", \"amount\"]]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "12 rows x 3 cols",
+    "result_preview": "    deal_id        stage  amount\n3         4  Prospecting    5600\n5         6     Proposal   12000\n6         7    Qualified   18500\n8         9  Prospecting    9900\n11       12     Proposal   61000\n14       15    Qualified    6800\n17       18  Prospecting    8900\n19       20     Proposal   11000\n21       22    Qualified    9500\n26       27     Proposal   41000\n27       28    Qualified    5200\n28       29  Prospecting   19800",
+    "alt_solutions": [
+      "deals[deals[\"closed_date\"].isna()][[\"deal_id\", \"stage\", \"amount\"]]",
+      "open_deals = deals[~deals[\"closed_date\"].notna()]\nopen_deals[[\"deal_id\", \"stage\", \"amount\"]]"
+    ],
+    "validation_notes": "Ran all snippets with the Pyodide-matched interpreter (pandas 2.2.3) against seed.py via grade.py. Reference `deals.loc[deals[\"closed_date\"].isna(), [\"deal_id\",\"stage\",\"amount\"]]` runs clean: dataframe, 12 rows x 3 cols (open deals 4,6,7,9,12,15,18,20,22,27,28,29 — exactly the NaT-closed_date rows). Both alt_solutions graded PASS (match) against the reference under order_matters=false: the boolean-mask-then-select form and the ~notna() form. All four concept code examples ran without error; notably `(deals[\"closed_date\"] == pd.NaT).sum()` returns 0, confirming the \"==NaN fails\" teaching point, and `.isna().sum()` returns 12. order_matters=false is correct since row order is incidental. validated=true.",
+    "validated": true
+  },
+  {
+    "id": "unique",
+    "title": "Unique values & value_counts",
+    "difficulty": "beginner",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Real data is full of repetition &mdash; the same <code>stage</code> shows up on dozens of deals, the same <code>industry</code> across many customers. Pandas gives you a small family of methods for asking &ldquo;what are the distinct things here, and how often does each appear?&rdquo;</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Call <code>.unique()</code> on a Series to get a plain array of its distinct values, <em>in the order they first appear</em> &mdash; no sorting, no counting. Its companion <code>.nunique()</code> just tells you <em>how many</em> distinct values there are. Reach for <code>.unique()</code> when you want the actual list of categories, and <code>.nunique()</code> when you only care about the count.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[\"stage\"].unique()"
+      },
+      {
+        "kind": "code",
+        "code": "deals[\"stage\"].nunique()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>When you want the distinct values <em>with their frequencies</em>, use <code>.value_counts()</code>. It returns a Series indexed by each distinct value, sorted from most common to least &mdash; a one-line answer to &ldquo;what&rsquo;s the breakdown?&rdquo;</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[\"stage\"].value_counts()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>And when the duplicates span <em>whole rows</em> rather than a single column, <code>drop_duplicates()</code> keeps just the first occurrence of each unique row (optionally over a subset of columns). Note the shape difference: <code>.unique()</code> hands you a bare array, while <code>drop_duplicates()</code> preserves the Series or DataFrame it was called on.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers[[\"industry\", \"country\"]].drop_duplicates()"
+      }
+    ],
+    "task_html": "<p>Return the <strong>list of distinct <code>industry</code> values</strong> among the customers &mdash; each industry once, as an array.</p>",
+    "hint": "Select the industry column and call .unique() on it.",
+    "solution": "customers[\"industry\"].unique()",
+    "order_matters": false,
+    "result_kind": "array",
+    "result_shape": "array len 7",
+    "result_preview": "array(['Manufacturing', 'Healthcare', 'Retail', 'Software', 'Logistics',\n       'Education', 'Finance'], dtype=object)",
+    "alt_solutions": [
+      "pd.unique(customers[\"industry\"])",
+      "customers.industry.drop_duplicates().to_numpy()",
+      "customers[\"industry\"].drop_duplicates().values"
+    ],
+    "validation_notes": "Validated with the Pyodide-matched interpreter (pandas 2.2.3) against seed.py via grade.py. Reference `customers[\\\"industry\\\"].unique()` runs clean -> kind=array, shape=array len 7 (repr captured in result_preview). All three alt_solutions graded PASS (order-insensitive array comparison): `pd.unique(...)`, and `drop_duplicates().to_numpy()`/`.values` which coerce the Series back to an array so kind matches. Note: a bare `customers[\\\"industry\\\"].drop_duplicates()` would return a Series, not an array, and would FAIL on kind mismatch -- so the alts deliberately convert to an array. All four concept_blocks code examples (deals unique/nunique/value_counts, customers 2-col drop_duplicates) executed without error.",
+    "validated": true
+  },
+  {
+    "id": "aggregate",
+    "title": "Aggregating a column",
+    "difficulty": "intermediate",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>A single column is a <code>Series</code>, and a Series knows how to <em>collapse itself into one number</em>. Reach for <code>.sum()</code>, <code>.mean()</code>, <code>.min()</code>, <code>.max()</code>, or <code>.count()</code> and pandas walks the whole column for you &mdash; no loop, just one value back.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[\"amount\"].sum()    # 636000 across all 30 deals\ndeals[\"amount\"].mean()   # the average deal size\ndeals[\"amount\"].max()    # the single biggest amount"
+      },
+      {
+        "kind": "html",
+        "html": "<p>These methods quietly <strong>skip missing values</strong> &mdash; <code>NaN</code> and <code>NaT</code> are ignored, not treated as zero. That is why <code>.count()</code> is worth knowing: it reports how many <em>non-missing</em> values a column holds. The <code>closed_date</code> column has a <code>NaT</code> for every still-open deal, so counting it tells you how many deals have actually closed.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals[\"deal_id\"].count()     # 30 — every deal has an id\ndeals[\"closed_date\"].count()  # 18 — the 12 open deals (NaT) don't count"
+      },
+      {
+        "kind": "html",
+        "html": "<p>To report <em>several</em> numbers at once with their own labels, hand a dictionary to <code>pd.Series</code>. Each key becomes a label, each value the aggregate &mdash; one tidy, named result:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "pd.Series({\n    \"biggest\": deals[\"amount\"].max(),\n    \"smallest\": deals[\"amount\"].min(),\n})"
+      }
+    ],
+    "task_html": "<p>In a <strong>single expression</strong>, report two things about <code>deals</code>: the <strong>number of deals</strong> labelled <code>num_deals</code> and the <strong>total of every <code>amount</code></strong> labelled <code>total_value</code>. Return them as one labelled <code>Series</code> (build it from a dictionary with those two keys).</p>",
+    "hint": "Build a pd.Series from a dict whose keys are \"num_deals\" and \"total_value\", using .count() (or len) and .sum().",
+    "solution": "pd.Series({\"num_deals\": deals[\"deal_id\"].count(), \"total_value\": deals[\"amount\"].sum()})",
+    "order_matters": false,
+    "result_kind": "series",
+    "result_shape": "series len 2",
+    "result_preview": "num_deals          30\ntotal_value    636000\ndtype: int64",
+    "alt_solutions": [
+      "pd.Series([len(deals), deals[\"amount\"].sum()], index=[\"num_deals\", \"total_value\"])"
+    ],
+    "validation_notes": "Validated with the Pyodide-matched interpreter (pandas 2.2.3) via spec/grade.py against seed.py. `grade.py --run sol.py` gives kind=series, len 2: num_deals=30, total_value=636000 (repr in result_preview). Alt solution `pd.Series([len(deals), deals[\\\"amount\\\"].sum()], index=[...])` graded PASS: match (Series compared by label/value pairs, order-insensitive, so the dict-order vs list-order difference does not matter). All four concept code examples run clean: sum=636000, mean=21200.0, max=61000, min=3100; deals[\\\"deal_id\\\"].count()=30 vs deals[\\\"closed_date\\\"].count()=18 (12 open deals carry NaT and are correctly skipped), which is the NaN-handling point. Note on kind strictness: I also tested a one-row DataFrame form (`pd.DataFrame({\\\"num_deals\\\":[...],\\\"total_value\\\":[...]})`); it runs, but the grader requires matching kind and reports FAIL (series vs dataframe). The intent allowed either shape, so the task_html and hint explicitly steer learners to the Series form to keep grading fair. Result is deterministic (fixed seed, no ties).",
+    "validated": true
+  },
+  {
+    "id": "groupby",
+    "title": "Grouping with groupby",
+    "difficulty": "intermediate",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>So far you&rsquo;ve summarized a whole column at once &mdash; one <code>.sum()</code> or <code>.mean()</code> over every row. But often the real question is <em>per category</em>: how many deals in each stage? what&rsquo;s the average amount per rep? That&rsquo;s the <strong>split&ndash;apply&ndash;combine</strong> pattern, and <code>groupby</code> is how pandas does it. You name a column to <em>split</em> the rows into groups, <em>apply</em> a summary to each group, and pandas <em>combines</em> the answers into one result &mdash; one row per group.</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The simplest summary is just counting the rows in each group. <code>df.groupby(\"col\").size()</code> returns a Series: the <strong>group key becomes the index</strong>, and the value is the row count for that group. Notice the index is labeled <code>stage</code> &mdash; the grouping column moved out of the data and into the index.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals.groupby(\"stage\").size()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>To summarize a specific column instead of just counting, pick the column after grouping: <code>deals.groupby(\"stage\")[\"amount\"].mean()</code> gives the average amount per stage. And when you want <em>several</em> summaries at once, <code>.agg(...)</code> lets you name each output column and pair it with a <code>(column, function)</code> tuple &mdash; the result is a tidy DataFrame, still keyed by the group.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals.groupby(\"stage\").agg(deal_count=(\"deal_id\", \"size\"), total_amount=(\"amount\", \"sum\"))"
+      }
+    ],
+    "task_html": "<p>Every deal sits in one <code>stage</code> &mdash; Prospecting, Qualified, Proposal, Won, or Lost. <strong>Count how many deals are in each stage.</strong> Group the <code>deals</code> by <code>stage</code> and return the count per group as a Series (the stage as the index label, the count as the value).</p>",
+    "hint": "Group with <code>deals.groupby(\"stage\")</code> and get the per-group row count with <code>.size()</code>.",
+    "solution": "deals.groupby(\"stage\").size()",
+    "order_matters": false,
+    "result_kind": "series",
+    "result_shape": "series len 5",
+    "result_preview": "stage\nLost            5\nProposal        4\nProspecting     4\nQualified       4\nWon            13\ndtype: int64",
+    "alt_solutions": [
+      "deals.groupby(\"stage\")[\"deal_id\"].count()",
+      "deals[\"stage\"].value_counts()",
+      "deals.groupby(\"stage\").agg(n=(\"deal_id\", \"size\"))[\"n\"]"
+    ],
+    "validation_notes": "Ran in pyodenv (pandas 2.2.3) via spec/grade.py against seed.py. Reference `deals.groupby(\\\"stage\\\").size()` runs clean: Series len 5 with stage index (Lost 5, Proposal 4, Prospecting 4, Qualified 4, Won 13). All three alt_solutions graded PASS (match) against the reference under the label-pair Series comparison: groupby.count on deal_id, value_counts (order-insensitive grading absorbs its count-descending order), and .agg then column select. All three concept_blocks code examples (`.size()`, `.mean()`, `.agg(...)`) ran without error. order_matters=false since the grader compares Series by (label,value) pairs.",
+    "validated": true
+  },
+  {
+    "id": "groupby-filter",
+    "title": "Filtering groups",
+    "difficulty": "intermediate",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>You already know how to collapse rows into one number per group with <code>groupby</code>. The next question is a natural one: <em>keep only the groups that pass some test</em> &mdash; industries with more than two customers, reps who closed at least five deals, cities with a single account. The idea is <strong>aggregate first, then filter the aggregated result</strong>.</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The cleanest path is two steps you&rsquo;ve already met. First build a per-group count with <code>groupby(&hellip;).size()</code>, which gives a Series indexed by the group key. Then apply a boolean mask to <em>that Series</em>, exactly the way you&rsquo;d filter any Series.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "sizes = customers.groupby(\"industry\").size()\nsizes[sizes >= 3]"
+      },
+      {
+        "kind": "html",
+        "html": "<p>That leaves you a Series of just the surviving groups. To hand back a tidy two-column table &mdash; the group key <em>and</em> its count &mdash; call <code>reset_index(name=\"count\")</code>, which turns the index into a column and names the counts.</p><p>There&rsquo;s also a one-shot form, <code>groupby(&hellip;).filter(lambda g: len(g) &gt; 2)</code>, but note what it returns: the <em>original rows</em> of the passing groups, not the counts. Reach for it when you want the members back; reach for the count-then-mask pattern when you want the summary.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers.groupby(\"industry\").filter(lambda g: len(g) > 2)"
+      }
+    ],
+    "task_html": "<p>Find the <strong>industries that have more than 2 customers</strong>. Return a two-column table with the <code>industry</code> and its <code>count</code> &mdash; only the industries whose customer count is greater than 2.</p>",
+    "hint": "Build per-industry counts with groupby(...).size().reset_index(name=\"count\"), then keep the rows where count > 2.",
+    "solution": "counts = customers.groupby(\"industry\").size().reset_index(name=\"count\")\ncounts[counts[\"count\"] > 2]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "2 rows x 2 cols",
+    "result_preview": "   industry  count\n5    Retail      3\n6  Software      4",
+    "alt_solutions": [
+      "vc = customers[\"industry\"].value_counts()\nvc[vc > 2].reset_index()",
+      "g = customers.groupby(\"industry\")[\"customer_id\"].count()\ng[g > 2].reset_index(name=\"count\")",
+      "counts = customers.groupby(\"industry\", as_index=False).size().rename(columns={\"size\": \"count\"})\ncounts[counts[\"count\"] > 2]"
+    ],
+    "validation_notes": "Validated with the Pyodide-matched interpreter (pandas 2.2.3) against seed.py via grade.py. Reference runs clean: dataframe, 2 rows x 2 cols, columns [industry, count] = Retail/3, Software/4 (industry counts across the 15 customers: Software 4, Retail 3, Manufacturing/Healthcare/Finance 2 each, Logistics/Education 1). Deterministic, no ties at the >2 boundary. order_matters=false. All three alt_solutions graded PASS (value_counts().reset_index() yields columns [industry, count] on 2.2.3; groupby count with reset_index(name); groupby as_index=False size + rename) - each matches by values under the multiset DataFrame rule. All three concept_blocks code examples (size+mask, size>=3 Series, and groupby.filter returning member rows) executed without error via grade.py --run.",
+    "validated": true
+  },
+  {
+    "id": "assign",
+    "title": "Adding & transforming columns",
+    "difficulty": "intermediate",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>So far you have <em>read</em> from your frames. Now you&rsquo;ll <strong>add</strong> to them. The cleanest way to attach a computed column is <code>assign</code> &mdash; it returns a <em>new</em> DataFrame with the extra column, leaving the original untouched. The new column is built <em>vectorized</em>: an expression over a whole Series computes every row at once, no loop in sight.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "# amount is in dollars; add a thousands-scaled column next to it\ndeals.assign(amount_k=deals[\"amount\"] / 1000)[[\"deal_id\", \"amount\", \"amount_k\"]].head()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The right-hand side can be any vectorized expression. A comparison like <code>deals[\"stage\"] == \"Won\"</code> yields a boolean Series &mdash; a ready-made flag column. For a two-way choice use <code>np.where(condition, if_true, if_false)</code>, and reach for the <code>.dt</code> accessor to pull pieces out of a datetime column, such as <code>.dt.year</code>.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "import numpy as np\ndeals.assign(\n    size=np.where(deals[\"amount\"] >= 30000, \"big\", \"small\"),\n    open_year=deals[\"opened_date\"].dt.year,\n)[[\"deal_id\", \"amount\", \"size\", \"open_year\"]].head()"
+      }
+    ],
+    "task_html": "<p>Take <code>deals</code> and add a boolean column named <strong><code>is_won</code></strong> that is <code>True</code> exactly when the deal&rsquo;s <code>stage</code> is <code>&quot;Won&quot;</code>. Keep every original column and append the new one, so the result has the <strong>8 columns</strong> <code>deal_id, customer_id, rep_id, amount, stage, opened_date, closed_date, is_won</code> for all 30 deals.</p>",
+    "hint": "Use <code>deals.assign(is_won=...)</code> with the boolean expression <code>deals[\"stage\"] == \"Won\"</code> as the value.",
+    "solution": "deals.assign(is_won=deals[\"stage\"] == \"Won\")",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "30 rows x 8 cols",
+    "result_preview": "    deal_id  customer_id  rep_id  ...  opened_date closed_date is_won\n0         1            1       2  ...   2025-01-10  2025-02-18   True\n1         2            1       2  ...   2025-06-01  2025-07-11  False\n2         3            2       4  ...   2025-02-14  2025-04-02   True\n3         4            3       1  ...   2026-01-08         NaT  False\n4         5            4       3  ...   2025-03-20  2025-05-30   True\n5         6            4       3  ...   2026-02-11         NaT  False\n6         7            5       5  ...   2026-01-25         NaT  False\n7         8            6       3  ...   2025-08-05  2025-09-15   True\n8         9            6       3  ...   2026-03-01         NaT  False\n9        10            7       5  ...   2025-04-12  2025-05-01  False",
+    "alt_solutions": [
+      "d = deals.copy()\nd[\"is_won\"] = d[\"stage\"] == \"Won\"\nd",
+      "import numpy as np\ndeals.assign(is_won=np.where(deals[\"stage\"] == \"Won\", True, False))",
+      "deals.assign(is_won=lambda df: df[\"stage\"].eq(\"Won\"))"
+    ],
+    "validation_notes": "Validated with the pinned pyodenv interpreter (pandas 2.2.3) against spec/seed.py via grade.py. Reference `deals.assign(is_won=deals[\"stage\"] == \"Won\")` runs clean: dataframe, 30 rows x 8 cols (repr in result_preview). Graded three alt solutions against the reference with `grade.py --solution sol.py --learner alt.py` (no --order, order_matters=false): (1) copy-then-assign-column, (2) np.where(...,True,False), (3) assign with a lambda using .eq — all returned PASS: match. Both concept code examples (amount_k division; np.where + .dt.year) ran without error via grade.py --run. Task is deterministic: is_won is a fixed boolean per row and each row has a unique deal_id, so the multiset row comparison is unambiguous.",
+    "validated": true
+  },
+  {
+    "id": "datetime",
+    "title": "Working with dates (.dt)",
+    "difficulty": "intermediate",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Some of your columns aren&rsquo;t numbers or text at all &mdash; they&rsquo;re real dates. <code>signup_date</code>, <code>opened_date</code>, and <code>closed_date</code> are all stored as <code>datetime64</code>, which means pandas understands them as moments in time, not just strings that happen to look like dates. To reach inside a datetime column and pull out a piece &mdash; the year, the month, the day &mdash; use the <code>.dt</code> accessor. <code>customers[\"signup_date\"].dt.year</code> hands you back a Series of integer years, one per row, computed all at once.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers[\"signup_date\"].dt.year"
+      },
+      {
+        "kind": "html",
+        "html": "<p><code>.dt.month</code> and <code>.dt.day</code> work the same way, so you can crack a date open into its parts and use each part however you like &mdash; here, alongside the original column.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers.assign(\n    year=customers[\"signup_date\"].dt.year,\n    month=customers[\"signup_date\"].dt.month,\n    day=customers[\"signup_date\"].dt.day,\n)[[\"name\", \"signup_date\", \"year\", \"month\", \"day\"]].head()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Because these are true dates, you can also <em>compare</em> them. Build a moment with <code>pd.Timestamp(\"2024-01-01\")</code> and use it in a boolean mask just like any number &mdash; <code>&lt;</code>, <code>&gt;</code>, <code>&gt;=</code> all order dates chronologically, and <code>.between(lo, hi)</code> checks a range. That lets you filter a frame down to rows on one side of a cutoff.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "cutoff = pd.Timestamp(\"2024-01-01\")\ncustomers[customers[\"signup_date\"] >= cutoff][[\"name\", \"signup_date\"]].head()"
+      }
+    ],
+    "task_html": "<p>Return the <strong><code>name</code> and <code>signup_date</code></strong> of every customer who <strong>signed up in 2024</strong>. Pull the year out of <code>signup_date</code> with <code>.dt.year</code> and keep only the rows where it equals <code>2024</code>.</p>",
+    "hint": "Filter with the boolean mask customers[\"signup_date\"].dt.year == 2024, then select the name and signup_date columns.",
+    "solution": "customers[customers[\"signup_date\"].dt.year == 2024][[\"name\", \"signup_date\"]]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "4 rows x 2 cols",
+    "result_preview": "               name signup_date\n0   Acme Industries  2024-01-15\n3    DataForge Labs  2024-09-10\n8   Ivywood Academy  2024-04-25\n12  Maple Retail Co  2024-12-02",
+    "alt_solutions": [
+      "customers.loc[customers[\"signup_date\"].dt.year == 2024, [\"name\", \"signup_date\"]]",
+      "mask = customers[\"signup_date\"] >= pd.Timestamp(\"2024-01-01\")\nmask &= customers[\"signup_date\"] < pd.Timestamp(\"2025-01-01\")\ncustomers[mask][[\"name\", \"signup_date\"]]",
+      "customers[customers[\"signup_date\"].dt.year.eq(2024)][[\"signup_date\", \"name\"]]"
+    ],
+    "validation_notes": "Validated in the pinned pyodenv (pandas 2.2.3) against spec/seed.py via spec/grade.py. `grade.py --run` on the reference `customers[customers[\"signup_date\"].dt.year == 2024][[\"name\", \"signup_date\"]]` yields a dataframe of 4 rows x 2 cols (Acme Industries, DataForge Labs, Ivywood Academy, Maple Retail Co — the four 2024 signups; repr in result_preview). Graded all three alt_solutions with `grade.py --solution sol.py --learner alt.py` (no --order, order_matters=false) — all PASS: match: (1) .loc row+column form, (2) a range mask using pd.Timestamp >= 2024-01-01 and < 2025-01-01, (3) .dt.year.eq(2024) selecting columns in the other order (signup_date, name). Column labels compare as a set so the alt's swapped column order still grades equal. All three concept code examples ran clean via `grade.py --run`: `.dt.year` (series len 15), the assign with year/month/day, and the pd.Timestamp cutoff comparison. Deterministic: exactly 4 customers signed up in 2024 and each row has a distinct name, so the multiset row comparison is unambiguous. order_matters=false is correct — the task is a filter/selection, not positional.",
+    "validated": true
+  },
+  {
+    "id": "merge",
+    "title": "Combining DataFrames with merge",
+    "difficulty": "intermediate",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>So far every question has lived inside a single table. But the interesting facts are spread across frames &mdash; a deal knows its <code>rep_id</code>, but the rep&rsquo;s <em>name</em> lives over in <code>reps</code>. <code>merge</code> stitches two frames together by matching values in a shared column, giving you one wide frame with columns from both sides.</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The workhorse call is <code>left.merge(right, on=\"key\")</code>. Here <code>deals</code> and <code>reps</code> both carry a <code>rep_id</code>, so pandas lines up each deal with the rep whose <code>rep_id</code> matches, and glues that rep&rsquo;s columns onto the deal&rsquo;s row. By default this is an <strong>inner</strong> join &mdash; only rows that find a match on both sides survive.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals.merge(reps, on=\"rep_id\").head()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The result carries every column from both frames, so you usually finish by <em>selecting</em> just the columns you care about with <code>merged[[\"amount\", \"name\"]]</code>. One gotcha: if both frames have a column of the <em>same</em> name (other than the key), pandas keeps both and disambiguates them with suffixes &mdash; <code>_x</code> and <code>_y</code> by default, or whatever you pass to <code>suffixes=</code>. Chaining a second merge onto <code>customers</code> shows it: both <code>reps</code> and <code>customers</code> have a <code>name</code>, so they land as <code>name_rep</code> and <code>name_customer</code>.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "deals.merge(reps, on=\"rep_id\").merge(\n    customers, on=\"customer_id\", suffixes=(\"_rep\", \"_customer\")\n).columns.tolist()"
+      }
+    ],
+    "task_html": "<p>Show <strong>each deal&rsquo;s <code>amount</code> next to the <code>name</code> of the rep who owns it</strong>. Merge <code>deals</code> with <code>reps</code> on <code>rep_id</code>, then keep just the <code>amount</code> and <code>name</code> columns &mdash; one row per deal (30 rows, columns <code>amount</code> and <code>name</code>).</p>",
+    "hint": "Use deals.merge(reps, on=\"rep_id\"), then select the two columns you want with double brackets.",
+    "solution": "merged = deals.merge(reps, on=\"rep_id\")\nmerged[[\"amount\", \"name\"]]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "30 rows x 2 cols",
+    "result_preview": "    amount            name\n0    24000      Marcus Lee\n1     8500      Marcus Lee\n2    32000      Tom Okafor\n3     5600  Dana Whitfield\n4    45000      Priya Nair\n5    12000      Priya Nair\n6    18500     Sofia Reyes\n7    27500      Priya Nair\n8     9900      Priya Nair\n9     4200     Sofia Reyes\n10    7600     Sofia Reyes",
+    "alt_solutions": [
+      "pd.merge(deals, reps, on=\"rep_id\")[[\"amount\", \"name\"]]",
+      "reps.merge(deals, on=\"rep_id\")[[\"amount\", \"name\"]]",
+      "deals.merge(reps, on=\"rep_id\").loc[:, [\"amount\", \"name\"]]"
+    ],
+    "validation_notes": "Ran in the Pyodide-matched venv (pandas 2.2.3) against seed.py via grade.py. Reference `deals.merge(reps, on=\"rep_id\")[[\"amount\",\"name\"]]` runs clean -> dataframe, 30 rows x 2 cols (repr captured for result_preview). Three alt_solutions each graded PASS with order_matters=false: pd.merge(...) top-level form, reps-on-left form (rows come out in a different order but grade equal as a multiset), and the .loc column-selection form. All three concept code examples execute without error: the .head() merge (5 rows x 10 cols), the .columns.tolist() (10 columns, rep's name lands as `name`, no collision because deals has no `name`), and the double-merge suffixes demo which correctly produces `name_rep` and `name_customer`. No amount ties matter here since grading is by multiset of (amount,name) rows; deterministic.",
+    "validated": true
+  },
+  {
+    "id": "left-merge",
+    "title": "Left merge & non-matches",
+    "difficulty": "advanced",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>A plain <code>merge</code> keeps only rows that match on <em>both</em> sides &mdash; a customer with zero deals simply vanishes from the result. Often that disappearance is exactly the thing you want to find. A <strong>left merge</strong> (<code>how=\"left\"</code>) keeps every row from the left frame no matter what, and fills the right side&rsquo;s columns with <code>NaN</code> wherever there was no match. So <code>customers.merge(deals, on=\"customer_id\", how=\"left\")</code> keeps all 15 customers; the ones without deals get <code>NaN</code> for <code>deal_id</code>, <code>amount</code>, and the rest.</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>To <em>see</em> where matches came from, add <code>indicator=True</code>. pandas appends a <code>_merge</code> column labelled <code>\"both\"</code>, <code>\"left_only\"</code>, or <code>\"right_only\"</code> for each row. The rows you care about are the <code>\"left_only\"</code> ones &mdash; left-side records that found nothing to join to.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "m = customers.merge(deals, on=\"customer_id\", how=\"left\", indicator=True)\nm[\"_merge\"].value_counts()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Filtering a left merge down to <code>_merge == \"left_only\"</code> is the <strong>anti-join</strong> &mdash; &ldquo;rows on the left with no partner on the right.&rdquo; It answers questions like &ldquo;which customers have never had a deal?&rdquo; A lighter-weight way to write the same idea is a boolean mask with <code>isin</code>: <code>customers[~customers[\"customer_id\"].isin(deals[\"customer_id\"])]</code> keeps customers whose id never appears among the deals. Both give the same answer; the indicator merge is handier when you also want the joined columns alongside.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "customers.merge(deals, on=\"customer_id\", how=\"left\", indicator=True)[[\"customer_id\", \"deal_id\", \"amount\", \"_merge\"]].head()"
+      }
+    ],
+    "task_html": "<p>Some customers have never generated a single deal. Using a left merge with <code>indicator=True</code> (or an <code>isin</code> anti-join), return <strong>just the <code>name</code></strong> of every customer who has <strong>no deals at all</strong>. Return a DataFrame with the single <code>name</code> column.</p>",
+    "hint": "Left-merge customers onto deals with indicator=True, keep the rows where _merge equals \"left_only\", then select [[\"name\"]].",
+    "solution": "merged = customers.merge(deals, on=\"customer_id\", how=\"left\", indicator=True)\nno_deals = merged[merged[\"_merge\"] == \"left_only\"]\nno_deals[[\"name\"]]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "2 rows x 1 cols",
+    "result_preview": "               name\n18  Ivywood Academy\n26  Maple Retail Co",
+    "alt_solutions": [
+      "customers[~customers[\"customer_id\"].isin(deals[\"customer_id\"])][[\"name\"]]",
+      "customers.loc[~customers[\"customer_id\"].isin(deals[\"customer_id\"].unique()), [\"name\"]]"
+    ],
+    "validation_notes": "Validated with the Pyodide-matched interpreter (pandas 2.2.3) against seed.py via grade.py. `--run` on the reference solution yields a 2-row x 1-col DataFrame with the name column: Ivywood Academy (customer_id 9) and Maple Retail Co (customer_id 13) — the two customers whose ids never appear in deals.customer_id. Both alt_solutions (isin anti-join, and .loc isin with .unique()) graded PASS: match against the reference (order_matters=false). Both concept_blocks code examples ran clean: the value_counts shows both=30, left_only=2, right_only=0, and the indicator head displays NaN-filled deal columns become visible for matched rows. No ties or nondeterminism — the anti-join set is exact.",
+    "validated": true
+  },
+  {
+    "id": "pivot",
+    "title": "Reshaping with pivot_table",
+    "difficulty": "advanced",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Everything so far has produced a <em>long</em> answer &mdash; one row per group, one number per row. But questions like &ldquo;how much money sits in each stage, broken out by industry?&rdquo; are really a <strong>grid</strong>: industries down the side, stages across the top, a total in every cell. <code>pivot_table</code> builds that grid in one call. You hand it four things: <code>index</code> (what labels the rows), <code>columns</code> (what labels the columns), <code>values</code> (the numbers to fill the cells), and <code>aggfunc</code> (how to combine when several rows land in the same cell).</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Our stage-and-amount data lives in <code>deals</code>, but the industry lives in <code>customers</code> &mdash; so we merge first to get an <code>industry</code> column alongside each deal, then pivot. Here we average the <code>amount</code> in each industry&times;stage cell:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "dealsind = deals.merge(customers[[\"customer_id\", \"industry\"]], on=\"customer_id\")\ndealsind.pivot_table(index=\"industry\", columns=\"stage\", values=\"amount\", aggfunc=\"mean\")"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Notice the holes: an industry&times;stage cell with <em>no</em> deals comes back as <code>NaN</code>. That is rarely what you want in a summary table &mdash; a missing combination usually means <em>zero</em>. Pass <code>fill_value=0</code> to plug those gaps. And <code>margins=True</code> adds a row and column of grand totals (named <code>&quot;All&quot;</code> by default, or whatever you pass as <code>margins_name</code>):</p>"
+      },
+      {
+        "kind": "code",
+        "code": "dealsind = deals.merge(customers[[\"customer_id\", \"industry\"]], on=\"customer_id\")\ndealsind.pivot_table(\n    index=\"industry\",\n    columns=\"stage\",\n    values=\"amount\",\n    aggfunc=\"sum\",\n    fill_value=0,\n    margins=True,\n    margins_name=\"Total\",\n)"
+      }
+    ],
+    "task_html": "<p>Build a summary grid of <strong>total deal <code>amount</code> for every industry &times; stage combination</strong>. Merge <code>deals</code> with <code>customers</code> to get each deal's <code>industry</code>, then pivot with <strong><code>industry</code> as the rows (<code>index</code>) and <code>stage</code> as the columns</strong>, summing <code>amount</code> into each cell and <strong>filling empty combinations with <code>0</code></strong> (no margins). The result is a <strong>6&times;5 DataFrame</strong>: one row per industry that has deals (<code>Finance, Healthcare, Logistics, Manufacturing, Retail, Software</code>) and one column per stage (<code>Lost, Proposal, Prospecting, Qualified, Won</code>).</p>",
+    "hint": "Merge deals with customers on customer_id, then call pivot_table with index=\"industry\", columns=\"stage\", values=\"amount\", aggfunc=\"sum\", fill_value=0.",
+    "solution": "merged = deals.merge(customers[[\"customer_id\", \"industry\"]], on=\"customer_id\")\nmerged.pivot_table(\n    index=\"industry\",\n    columns=\"stage\",\n    values=\"amount\",\n    aggfunc=\"sum\",\n    fill_value=0,\n)",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "6 rows x 5 cols",
+    "result_preview": "stage           Lost  Proposal  Prospecting  Qualified     Won\nindustry\nFinance        13500     11000            0          0   90000\nHealthcare      7400         0         8900       5200   32000\nLogistics          0         0            0      18500   29000\nManufacturing   8500     61000        19800          0   39000\nRetail          4200         0         5600          0   24100\nSoftware        3100     53000         9900      16300  176000",
+    "alt_solutions": [
+      "merged = deals.merge(customers[[\"customer_id\", \"industry\"]], on=\"customer_id\")\n(\n    merged.groupby([\"industry\", \"stage\"])[\"amount\"]\n    .sum()\n    .unstack(fill_value=0)\n)",
+      "merged = deals.merge(customers, on=\"customer_id\")\nmerged.pivot_table(index=\"industry\", columns=\"stage\", values=\"amount\", aggfunc=\"sum\", fill_value=0)"
+    ],
+    "validation_notes": "Ran against seed.py with the Pyodide-matched interpreter (pandas 2.2.3). grade.py --run on the reference confirms kind=dataframe, shape 6 rows x 5 cols, with row labels Finance/Healthcare/Logistics/Manufacturing/Retail/Software and column labels Lost/Proposal/Prospecting/Qualified/Won (pivot sorts both axes alphabetically). Education has no deals so it is correctly absent (no customer_id maps to an Education customer in deals). Both alt_solutions (groupby+unstack; merge full customers then pivot_table) graded PASS: match against the reference. Both concept_blocks code examples (mean pivot with NaN holes; sum pivot with fill_value=0 and margins) run clean via grade.py --run. order_matters=false since this is a values grid, not a ranking.",
+    "validated": true
+  },
+  {
+    "id": "window-rank",
+    "title": "Ranking & window ops",
+    "difficulty": "advanced",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>Sometimes you want a group-wise calculation but you <em>don&rsquo;t</em> want to collapse the rows. Every deal should stay a deal &mdash; you just want to add a number that answers &ldquo;where does this row rank <strong>within its group</strong>?&rdquo; That&rsquo;s a <strong>window operation</strong>, and pandas gives you two workhorses: <code>groupby(...).rank()</code> for positions, and <code>groupby(...).transform(...)</code> for broadcasting a group aggregate back onto every row.</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p><code>rank()</code> turns values into 1, 2, 3&hellip; positions. By default it ranks smallest&rarr;first; pass <code>ascending=False</code> to make the <em>largest</em> value rank&nbsp;1. When you call it after <code>groupby</code>, the numbering restarts inside each group. The <code>method=</code> argument decides how ties are handled &mdash; <code>&quot;dense&quot;</code> gives tied values the same rank with no gaps, <code>&quot;min&quot;</code> shares the lowest rank, and <code>&quot;first&quot;</code> breaks ties by row order. Here the deal amounts happen to be distinct within every stage, so all of these agree.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "# a per-group rank column, added without collapsing rows\ndeals.assign(\n    rank_in_stage=deals.groupby(\"stage\")[\"amount\"].rank(method=\"dense\", ascending=False).astype(int)\n)[[\"deal_id\", \"stage\", \"amount\", \"rank_in_stage\"]].head()"
+      },
+      {
+        "kind": "html",
+        "html": "<p>The companion tool is <code>transform</code>. Where a plain <code>groupby(...).sum()</code> returns one row per group, <code>transform(\"sum\")</code> computes that same per-group total but <em>hands it back aligned to every original row</em> &mdash; perfect for &ldquo;this deal&rsquo;s amount vs. its stage&rsquo;s total.&rdquo; The result always matches the frame&rsquo;s length, so you can drop it straight into a new column.</p>"
+      },
+      {
+        "kind": "code",
+        "code": "# transform broadcasts a group aggregate back to every row\ndeals.assign(\n    stage_total=deals.groupby(\"stage\")[\"amount\"].transform(\"sum\")\n)[[\"deal_id\", \"stage\", \"amount\", \"stage_total\"]].head()"
+      }
+    ],
+    "task_html": "<p>Within each <code>stage</code>, rank the deals by <code>amount</code> so that the <strong>largest amount in that stage is rank&nbsp;1</strong>. Return one row per deal with the columns <code>deal_id</code>, <code>stage</code>, <code>amount</code>, and <code>rank_in_stage</code> &mdash; all 30 deals, not just the winners.</p>",
+    "hint": "Use groupby(\"stage\")[\"amount\"].rank(ascending=False) to number rows within each group, then attach it as a new column with assign.",
+    "solution": "ranked = deals.assign(\n    rank_in_stage=deals.groupby(\"stage\")[\"amount\"].rank(method=\"dense\", ascending=False).astype(int)\n)\nranked[[\"deal_id\", \"stage\", \"amount\", \"rank_in_stage\"]]",
+    "order_matters": false,
+    "result_kind": "dataframe",
+    "result_shape": "30 rows x 4 cols",
+    "result_preview": "    deal_id        stage  amount  rank_in_stage\n0         1          Won   24000              9\n1         2         Lost    8500              2\n2         3          Won   32000              6\n3         4  Prospecting    5600              4\n4         5          Won   45000              3\n5         6     Proposal   12000              3\n6         7    Qualified   18500              1\n7         8          Won   27500              8\n8         9  Prospecting    9900              2\n9        10         Lost    4200              4",
+    "alt_solutions": [
+      "d = deals.copy()\nd[\"rank_in_stage\"] = d.groupby(\"stage\")[\"amount\"].transform(lambda s: s.rank(method=\"min\", ascending=False)).astype(int)\nd[[\"deal_id\", \"stage\", \"amount\", \"rank_in_stage\"]]",
+      "result = deals[[\"deal_id\", \"stage\", \"amount\"]].copy()\nresult[\"rank_in_stage\"] = result.groupby(\"stage\")[\"amount\"].rank(ascending=False, method=\"first\").astype(int)\nresult",
+      "out = deals.assign(rank_in_stage=deals.groupby(\"stage\")[\"amount\"].rank(method=\"dense\", ascending=False).astype(int))\nout.sort_values([\"stage\", \"rank_in_stage\"])[[\"deal_id\", \"stage\", \"amount\", \"rank_in_stage\"]].reset_index(drop=True)"
+    ],
+    "validation_notes": "Ran all snippets against seed.py with the Pyodide-matched interpreter (pandas 2.2.3) via grade.py. Reference (--run) produces a 30 row x 4 col DataFrame with columns deal_id, stage, amount, rank_in_stage. Verified no amount ties exist within any stage (checked each group's sorted amounts), so method=\"dense\"/\"min\"/\"first\" all yield identical ranks and the task is fully deterministic. All three alt_solutions graded PASS against the reference: alt1 uses transform+lambda with method=\"min\", alt2 builds columns first with method=\"first\", alt3 sorts the output and reset_index (order-insensitive under order_matters=false). All three concept_blocks code examples ran clean via grade.py --run. order_matters=false because the rank_in_stage column itself carries the ranking, making the multiset comparison robust to row order.",
+    "validated": true
+  },
+  {
+    "id": "capstone",
+    "title": "Putting it all together",
+    "difficulty": "advanced",
+    "concept_blocks": [
+      {
+        "kind": "html",
+        "html": "<p>You&rsquo;ve met every move on its own &mdash; filtering with a boolean mask, <code>merge</code> to pull in another table, <code>groupby</code> to split-apply-combine, an aggregate like <code>sum</code>, <code>sort_values</code>, and <code>head</code> for a top-N. A real question rarely needs just one of them. The pandas way is to <em>chain</em> them: each method returns a new DataFrame or Series, so you can hang the next step right off it and read the whole pipeline top to bottom like a recipe.</p>"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Say you want the total <code>amount</code> won in each region. Keep only the <code>Won</code> deals, bring in the reps table so every row knows its <code>region</code>, group by that region, and sum the amounts &mdash; one flowing expression, no throwaway variables:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "(\n    deals[deals[\"stage\"] == \"Won\"]\n    .merge(reps, on=\"rep_id\")\n    .groupby(\"region\")[\"amount\"]\n    .sum()\n)"
+      },
+      {
+        "kind": "html",
+        "html": "<p>Order matters at the finish. When the ask is a <strong>leaderboard</strong> &mdash; biggest first, only the top few &mdash; end the chain with <code>sort_values(ascending=False)</code> and <code>head(n)</code>. Wrapping the pipeline in parentheses lets you put each step on its own line so a long chain stays readable:</p>"
+      },
+      {
+        "kind": "code",
+        "code": "(\n    deals[deals[\"stage\"] == \"Won\"]\n    .groupby(\"rep_id\")[\"amount\"]\n    .sum()\n    .sort_values(ascending=False)\n    .head(2)\n)"
+      },
+      {
+        "kind": "html",
+        "html": "<p>One habit that keeps grading happy: after a <code>groupby</code> the group key becomes the index, so call <code>reset_index</code> to turn it back into a plain column &mdash; and use <code>reset_index(name=\"...\")</code> on a Series to name the aggregated column in the same breath.</p>"
+      }
+    ],
+    "task_html": "<p>Build the <strong>sales leaderboard</strong>. Looking only at <code>Won</code> deals, produce each rep&rsquo;s <strong><code>name</code> and their total won <code>amount</code> as a column called <code>total_won</code></strong>, <strong>highest total first</strong>, and keep only the <strong>top 3</strong> reps. You&rsquo;ll need to <code>merge</code> in the reps table to get each rep&rsquo;s name.</p>",
+    "hint": "Filter to Won, merge deals with reps on rep_id, groupby the rep's name and sum amount, then reset_index(name=\"total_won\"), sort_values descending, and head(3).",
+    "solution": "(\n    deals[deals[\"stage\"] == \"Won\"]\n    .merge(reps, on=\"rep_id\")\n    .groupby(\"name\")[\"amount\"]\n    .sum()\n    .reset_index(name=\"total_won\")\n    .sort_values(\"total_won\", ascending=False)\n    .head(3)\n    .reset_index(drop=True)\n)",
+    "order_matters": true,
+    "result_kind": "dataframe",
+    "result_shape": "3 rows x 2 cols",
+    "result_preview": "             name  total_won\n0      Priya Nair     106000\n1  Dana Whitfield      86500\n2      Marcus Lee      78000",
+    "alt_solutions": [
+      "won = deals.merge(reps, on=\"rep_id\")\nwon = won[won[\"stage\"] == \"Won\"]\ntotals = won.groupby(\"name\", as_index=False)[\"amount\"].sum()\ntotals = totals.rename(columns={\"amount\": \"total_won\"})\ntotals.sort_values(\"total_won\", ascending=False).head(3).reset_index(drop=True)",
+      "(\n    deals.query(\"stage == 'Won'\")\n    .merge(reps[[\"rep_id\", \"name\"]], on=\"rep_id\")\n    .groupby(\"name\")[\"amount\"]\n    .sum()\n    .nlargest(3)\n    .rename(\"total_won\")\n    .reset_index()\n)"
+    ],
+    "validation_notes": "Validated with the Pyodide-matched interpreter (pandas 2.2.3) via spec/grade.py against seed.py. `grade.py --run` on the reference solution produced a 3x2 DataFrame [Priya Nair 106000, Dana Whitfield 86500, Marcus Lee 78000] (captured verbatim in result_preview). Both alt_solutions graded `PASS: match` under `--order` (alt1: merge-first then groupby as_index=False + sort/head; alt2: query + nlargest on the summed Series). Both concept code examples ran clean via `grade.py --run` (region-sum Series len 3; top-2 rep_id Series len 2). Won-deal totals are unambiguous with no ties at the top-3 boundary (4th place is Sofia Reyes at 72600), so the leaderboard is deterministic. order_matters=true because it is a ranked top-N; reference ends in reset_index(drop=True) so the index does not fight grading.",
+    "validated": true
+  }
+]
